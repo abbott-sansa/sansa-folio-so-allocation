@@ -1,0 +1,11 @@
+<deploy>
+    <configuration>
+        <path>~/AccountConfiguration/*</path>
+    </configuration>
+    <files>
+        <path>~/FileCabinet/*</path>
+    </files>
+    <translationimports>
+        <path>~/Translations/*</path>
+    </translationimports>
+</deploy>
