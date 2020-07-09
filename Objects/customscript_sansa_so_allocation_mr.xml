@@ -1,5 +1,7 @@
 <mapreducescript scriptid="customscript_sansa_so_allocation_mr">
-  <description></description>
+  <description>Sales Order Allocation&#xd;
+&#xd;
+Automatically codes each Sales Order line to a Marketing Campaign.</description>
   <isinactive>F</isinactive>
   <name>[SANSA] Sales Order Allocation M/R</name>
   <notifyadmins>F</notifyadmins>
@@ -14,15 +16,17 @@
       <loglevel>DEBUG</loglevel>
       <queueallstagesatonce>T</queueallstagesatonce>
       <runasrole>ADMINISTRATOR</runasrole>
-      <status>NOTSCHEDULED</status>
+      <status>SCHEDULED</status>
       <title>[SANSA] Sales Order Allocation M/R</title>
       <yieldaftermins>60</yieldaftermins>
       <recurrence>
-        <single>
-          <repeat></repeat>
+        <daily>
+          <enddate></enddate>
+          <everyxdays>1</everyxdays>
+          <repeat>PT15M</repeat>
           <startdate>2020-03-05</startdate>
-          <starttime>18:00:00Z</starttime>
-        </single>
+          <starttime>01:00:00Z</starttime>
+        </daily>
       </recurrence>
     </scriptdeployment>
   </scriptdeployments>

@@ -1,15 +1,12 @@
 /**
  * Sales Order Allocation
  * Automatically codes each Sales Order line to a Marketing Campaign.
- * Also performs some additional actions:
- *  - Allocation of shipping costs to a marketing campaign.
- *  - Population of Lot Number on the Inventory Detail sub-record.
- *  - Population of the Analysis field.
  * N.B. Whilst designed with a specific set of scenarios in mind, the intention
  *      is that this customisation may be easily modified.
  *
  * Version      Date                Author                      Remarks
  * 1.0          04 Mar 2020         Chris Abbott                N/A
+ * 1.1          01 Jul 2020         Chris Abbott                Moved Lot Number and Analysis Code automation to a separate script.
  *
  * @NApiVersion 2.x
  * @NScriptType MapReduceScript
@@ -266,22 +263,21 @@ define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/
                 columns: ['internalid'],
                 filters: [
                     ['mainline', search.Operator.IS, true],
-                    // TODO - Move to Map???
                     'and',
-                    ['custbody_sansa_so_allocation_complete', search.Operator.IS, false]
+                    ['custbody_sansa_so_allocation_complete', search.Operator.IS, false],
+                    'and',
+                    ['trandate', search.Operator.ONORAFTER, '6/6/2020']
                 ]
             });
-
-            // TODO - Sort by newest Order.
         }
 
         /**
-         * Executes when the map entry point is triggered and applies to each key/value pair.
+         * Executes when the reduce entry point is triggered and applies to each group.
          *
-         * @param {MapSummary} context - Data collection containing the key/value pairs to process through the map stage
+         * @param {ReduceSummary} context - Data collection containing the groups to process through the reduce stage
          * @since 2015.1
          */
-        function map(context) {
+        function reduce(context) {
             // Map handles allocation and reduce deals with the other stuff.
             log.debug('context', context);
 
@@ -338,7 +334,7 @@ define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/
                             loaded_record: sales_order
                         });
                     } catch (err) {
-                        log.error('ERROR', err);
+                        log.error('ERROR1', err);
                     }
 
                     // The campaigns object allows for line level allocation as well as a default value provided by '*'.
@@ -349,176 +345,49 @@ define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/
                 }
 
                 for (var i = 0, line_count = sales_order.getLineCount({sublistId: 'item'}); i < line_count; i++) {
-                    var campaign;
-                    var line_id = sales_order.getSublistValue({
-                        sublistId: 'item',
-                        fieldId: 'lineuniquekey',
-                        line: i
-                    });
-
-                    if (campaigns[line_id]) {
-                        campaign = campaigns[line_id].campaign;
-                        log.debug('campaigns[line_id]', campaigns[line_id]);
-
-                        var item_id = sales_order.getSublistValue({
+                    // Using try/catch to set any lines where we possibly can.
+                    try {
+                        var campaign;
+                        var line_id = sales_order.getSublistValue({
                             sublistId: 'item',
-                            fieldId: 'item',
+                            fieldId: 'lineuniquekey',
                             line: i
                         });
 
-                        // This really shouldn't happen.
-                        if (!campaign || item_id != campaigns[line_id].item_id) {
-                            throw error.create({name: 'UNEXPECTED_ERROR', message: 'Unexpected Error'});
+                        if (campaigns[line_id]) {
+                            campaign = campaigns[line_id].campaign;
+                            log.debug('campaigns[line_id]', campaigns[line_id]);
+
+                            var item_id = sales_order.getSublistValue({
+                                sublistId: 'item',
+                                fieldId: 'item',
+                                line: i
+                            });
+
+                            // This really shouldn't happen.
+                            if (!campaign || item_id != campaigns[line_id].item_id) {
+                                throw error.create({name: 'UNEXPECTED_ERROR', message: 'Unexpected Error'});
+                            }
+                        } else {
+                            campaign = campaigns['*'];
                         }
-                    } else {
-                        campaign = campaigns['*'];
+
+                        log.audit('INFO', 'Updating SO Line [' + i + '] with Campaign [' + Number(campaign) + '].')
+
+                        sales_order.setSublistValue({
+                            sublistId: 'item',
+                            fieldId: 'class',
+                            value: Number(campaign),
+                            line: i
+                        });
+                    } catch (err) {
+                        log.error('ERROR2', err);
                     }
-
-                    log.audit('INFO', 'Updating SO Line [' + i + '] with Campaign [' + Number(campaign) + '].')
-
-                    sales_order.setSublistValue({
-                        sublistId: 'item',
-                        fieldId: 'class',
-                        value: Number(campaign),
-                        line: i
-                    });
                 }
 
                 sales_order.save();
             } catch (err) {
-                log.error('ERROR', err);
-            }
-
-            // Only need to pass the ID to reduce.
-            context.write({
-                key: context.key,
-                value: context.key
-            });
-        }
-
-        /**
-         * Executes when the reduce entry point is triggered and applies to each group.
-         *
-         * @param {ReduceSummary} context - Data collection containing the groups to process through the reduce stage
-         * @since 2015.1
-         */
-        function reduce(context) {
-            // Map handles allocation and reduce deals with the other stuff.
-            log.debug('context', context);
-
-            var sales_order = record.load({type: record.Type.SALES_ORDER, id: context.key});
-
-            var items = [];
-            for (var i = 0, line_count = sales_order.getLineCount({sublistId: 'item'}); i < line_count; i++) {
-                items.push(sales_order.getSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'item',
-                    line: i
-                }));
-            }
-
-            log.debug('items', items);
-
-            // TODO - Is it possible to deal with an errored line?
-            // TODO - e.g. https://5602569-sb1.app.netsuite.com/app/accounting/transactions/salesord.nl?id=83331
-
-            // Wrap this in a try/catch so as to be able to update the status and allow for auto-invoicing.
-            try {
-                // Try to automatically assign an Inventory Number and set the Analysis Code from this.
-                var item_inventory_numbers = {};
-                search.create({
-                    type: 'inventorynumber',
-                    columns: ['internalid', 'item', 'inventorynumber', 'quantityavailable'],
-                    filters: [
-                        ['item', search.Operator.ANYOF, items],
-                        'and',
-                        ['location', search.Operator.ANYOF, sales_order.getValue({fieldId: 'location'})],
-                        'and',
-                        ['quantityavailable', search.Operator.GREATERTHAN, 0]
-                    ]
-                }).run().each(function (result) {
-                    if (!item_inventory_numbers[result.getValue({name: 'item'})]) {
-                        item_inventory_numbers[result.getValue({name: 'item'})] = {
-                            inventory_number_id: result.getValue({name: 'internalid'}),
-                            inventory_number_text: result.getValue({name: 'inventorynumber'}),
-                            available_quantity: result.getValue({name: 'quantityavailable'})
-                        };
-                    }
-
-                    return true;
-                });
-
-                log.debug('item_inventory_numbers', item_inventory_numbers);
-
-                for (var i=0, line_count=sales_order.getLineCount({sublistId: 'item'}); i<line_count; i++) {
-                    var item_inventory_number_text;
-                    var existing_inventory_detail = sales_order.hasSublistSubrecord({sublistId: 'item', fieldId: 'inventorydetail', line: i});
-                    var inventory_detail = sales_order.getSublistSubrecord({
-                        sublistId: 'item',
-                        fieldId: 'inventorydetail',
-                        line: 0
-                    });
-
-                    if (existing_inventory_detail) {
-                        if (!sales_order.getSublistValue({sublistId: 'item', fieldId: 'csegcseg_anal_segme', line: i})) {
-                            item_inventory_number_text = inventory_detail.getSublistText({
-                                sublistId: 'inventoryassignment',
-                                fieldId: 'issueinventorynumber',
-                                line: 0
-                            });
-                        }
-                    } else {
-                        var item_quantity = sales_order.getSublistValue({
-                            sublistId: 'item',
-                            fieldId: 'quantity',
-                            line: i
-                        });
-
-                        var item_inventory_number = item_inventory_numbers[sales_order.getSublistValue({
-                            sublistId: 'item',
-                            fieldId: 'item',
-                            line: i
-                        })];
-
-                        if (!item_inventory_number) {continue;}
-
-                        var item_inventory_number_id = item_inventory_number.inventory_number_id;
-                        item_inventory_number_text = item_inventory_number.inventory_number_text;
-
-                        var inventory_detail = sales_order.getSublistSubrecord({
-                            sublistId: 'item',
-                            fieldId: 'inventorydetail',
-                            line: i
-                        });
-
-                        inventory_detail.setSublistValue({
-                            sublistId: 'inventoryassignment',
-                            fieldId: 'issueinventorynumber',
-                            value: item_inventory_number_id,
-                            line: 0
-                        });
-
-                        inventory_detail.setSublistValue({
-                            sublistId: 'inventoryassignment',
-                            fieldId: 'quantity',
-                            value: Math.min(item_quantity, item_inventory_number.available_quantity),
-                            line: 0
-                        });
-                    }
-
-                    if (item_inventory_number_text) {
-                        sales_order.setSublistText({
-                            sublistId: 'item',
-                            fieldId: 'csegcseg_anal_segme',
-                            text: item_inventory_number_text,
-                            line: i
-                        });
-                    }
-                }
-
-                sales_order.save();
-            } catch(err) {
-                log.error('ERROR', err);
+                log.error('ERROR3', err);
             }
 
             // We must update the status to make way for auto-invoicing.
@@ -602,7 +471,6 @@ define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/
 
         return {
             getInputData: getInputData,
-            map: map,
             reduce: reduce,
             summarize: summarize
         };

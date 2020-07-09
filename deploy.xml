@@ -3,7 +3,8 @@
         <path>~/AccountConfiguration/*</path>
     </configuration>
     <files>
-        <path>~/FileCabinet/*</path>
+        <path>~/FileCabinet/SuiteScripts/[SANSA] Sales Order Allocation/sansa_so_allocation_mr.js</path>
+        <path>~/FileCabinet/SuiteScripts/[SANSA] Sales Order Allocation/sansa_so_inventory_mr.js</path>
     </files>
     <translationimports>
         <path>~/Translations/*</path>
