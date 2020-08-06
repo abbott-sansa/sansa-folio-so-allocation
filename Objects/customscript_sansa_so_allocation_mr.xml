@@ -1,6 +1,6 @@
 <mapreducescript scriptid="customscript_sansa_so_allocation_mr">
   <description>Sales Order Allocation&#xd;
-&#xd;
+    &#xd;
     Automatically codes each Sales Order line to a Marketing Campaign.</description>
   <isinactive>F</isinactive>
   <name>[SANSA] Sales Order Allocation M/R</name>
