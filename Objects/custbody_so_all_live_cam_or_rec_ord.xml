@@ -27,7 +27,7 @@
   <defaultchecked>F</defaultchecked>
   <defaultselection></defaultselection>
   <defaultvalue></defaultvalue>
-  <description></description>
+  <description>Used as part of the Sales Order Allocation process.</description>
   <displayheight></displayheight>
   <displaytype>STATICTEXT</displaytype>
   <displaywidth></displaywidth>

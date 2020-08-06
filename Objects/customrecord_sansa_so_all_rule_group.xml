@@ -10,7 +10,7 @@
   <allowquicksearch>F</allowquicksearch>
   <allowuiaccess>T</allowuiaccess>
   <customsegment></customsegment>
-  <description></description>
+  <description>Configuration for the Sales Order Allocation process.</description>
   <enabledle>T</enabledle>
   <enablekeywords>F</enablekeywords>
   <enablemailmerge>F</enablemailmerge>

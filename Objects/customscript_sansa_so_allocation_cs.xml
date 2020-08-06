@@ -1,5 +1,7 @@
 <clientscript scriptid="customscript_sansa_so_allocation_cs">
-  <description></description>
+  <description>Sales Order Allocation&#xd;
+    &#xd;
+    Customises the UI to streamline the management of SO Allocation Rules.</description>
   <isinactive>F</isinactive>
   <name>[SANSA] Sales Order Allocation CS</name>
   <notifyadmins>F</notifyadmins>

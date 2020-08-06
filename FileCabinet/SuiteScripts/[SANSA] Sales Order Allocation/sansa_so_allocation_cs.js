@@ -1,4 +1,5 @@
 /**
+ * Sales Order Allocation
  * Customises the UI to streamline the management of SO Allocation Rules.
  *
  * Version      Date                Author                      Remarks
@@ -13,8 +14,7 @@ define(['N/record', 'N/search'],
 function(record, search) {
 
     var dynamic_fields = [];
-    
-    
+
     /**
      * Function to be executed after page is initialized.
      *
