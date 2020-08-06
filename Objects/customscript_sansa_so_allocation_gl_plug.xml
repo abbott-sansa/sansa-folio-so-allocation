@@ -1,7 +1,7 @@
 <customglplugin scriptid="customscript_sansa_so_allocation_gl_plug">
   <description>Sales Order Allocation&#xd;
-    &#xd;
-    Responsible for allocating shipping costs and discounts to a Campaign.</description>
+&#xd;
+Responsible for allocating shipping costs and discounts to a Campaign.</description>
   <isinactive>F</isinactive>
   <loglevel>DEBUG</loglevel>
   <name>[SANSA] Sales Order Allocation</name>
