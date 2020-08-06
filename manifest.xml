@@ -27,13 +27,15 @@
     </features>
     <objects>
       <object>customrecord_customer_campaign.custrecord_campaign</object>
+      <object>custbodygroup_id</object>
       <object>custrecord_end_date</object>
+      <object>custitem_classification</object>
       <object>customrecord_customer_campaign</object>
       <object>customrecord_customer_campaign.custrecord_customer</object>
+      <object>custbodydiscount_code</object>
       <object>custentity_fsl_lastorderdate</object>
       <object>customlist294</object>
       <object>custrecord_start_date</object>
-      <object>custitem_classification</object>
     </objects>
   </dependencies>
 </manifest>

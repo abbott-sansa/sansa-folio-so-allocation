@@ -25,7 +25,7 @@ Automatically codes each Sales Order line to a Marketing Campaign.</description>
           <everyxdays>1</everyxdays>
           <repeat>PT15M</repeat>
           <startdate>2020-03-05</startdate>
-          <starttime>01:00:00Z</starttime>
+          <starttime>00:00:00Z</starttime>
         </daily>
       </recurrence>
     </scriptdeployment>
