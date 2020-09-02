@@ -74,6 +74,11 @@ function customizeGlImpact(transactionRecord, standardLines, customLines, book) 
             continue;
         }
 
+        // Zero valued lines need no further attention.
+        if (currLine.getCreditAmount() == 0 && currLine.getDebitAmount() == 0) {
+            continue;
+        }
+
         // Reverse the line and allocate the replacement line.
         var amount;
         var new_credit_line = customLines.addNewLine();
