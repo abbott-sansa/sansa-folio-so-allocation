@@ -7,6 +7,7 @@
  * Version      Date                Author                      Remarks
  * 1.0          04 Mar 2020         Chris Abbott                N/A
  * 1.1          01 Jul 2020         Chris Abbott                Moved Lot Number and Analysis Code automation to a separate script.
+ * 1.2          05 Oct 2020         Chris Abbott                Filtered out some inactive records in Saved Searches.
  *
  * @NApiVersion 2.x
  * @NScriptType MapReduceScript
@@ -18,7 +19,6 @@ define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/
 
         // Function used to determine the Campaign associated with a particular Rule Group.
         function getCampaigns(campaigns, options) {
-            log.debug('options', options);
             if (options.allocation_rule_group === undefined) {
                 throw error.create({
                     name: 'MISSING_REQUIRED_ARGUMENT',
@@ -59,7 +59,11 @@ define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/
                     search.create({
                         type: 'customrecordfsl_vouchercode',
                         columns: ['custrecordfsl_campaign'],
-                        filters: ['custrecord118', search.Operator.IS, voucher_code]
+                        filters: [
+                            ['isinactive', search.Operator.IS, false],
+                            'and',
+                            ['custrecord118', search.Operator.IS, voucher_code]
+                        ]
                     }).run().each(function (result) {
                         if (campaign_value) {
                             throw error.create({
@@ -111,6 +115,8 @@ define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/
                             'custrecord_campaign.custrecord_end_date'
                         ],
                         filters: [
+                            ['isinactive', search.Operator.IS, false],
+                            'and',
                             ['custrecord_campaign.custrecord_start_date', search.Operator.ONORBEFORE, 'today'],
                             'and',
                             ['custrecord_campaign.custrecord_end_date', search.Operator.ONORAFTER, 'today'],
@@ -128,10 +134,8 @@ define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/
                         var item_ids = item_id_list.split(',');
                         for (var i in item_ids) {
                             var item_id = item_ids[i];
-                            log.debug('item_id', item_id);
 
                             if (items.indexOf(item_id) < 0) {
-                                log.debug('burn', item_id);
                                 continue;
                             }
 
@@ -284,7 +288,7 @@ define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/
             // Wrap this all in a try/catch to allow falling through to reduce in case of any fatal error.
             try {
                 // Load the SO Allocation Rules.
-                var allocation_rules = {};
+                var allocation_rules = [];
                 search.create({
                     type: 'customrecord_sansa_so_all_rule',
                     columns: [
@@ -298,16 +302,16 @@ define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/
                     ]
                 }).run().each(function (result) {
                     var rule_group = result.getText({name: 'custrecord_sansa_so_all_rule_group'});
-                    if (!allocation_rules[rule_group]) {
-                        allocation_rules[rule_group] = [];
+                    if (allocation_rules.length == 0 || allocation_rules[allocation_rules.length - 1].rule_group != rule_group) {
+                        allocation_rules.push({rule_group: rule_group, rules_list: []});
                     }
 
-                    allocation_rules[rule_group].push({
+                    allocation_rules[allocation_rules.length - 1].rules_list.push({
                         field_id: result.getValue({
                             name: 'custrecord_sansa_so_all_rule_group_fldid',
                             join: 'custrecord_sansa_so_all_rule_group'
                         }),
-                        value: result.getValue({name: 'custrecord_sansa_so_all_rule_value'}).split(','),
+                        value: result.getValue({name: 'custrecord_sansa_so_all_rule_value'}).split('\u0005'),
                         campaign: result.getValue({name: 'custrecord_sansa_so_all_rule_campaign'}),
                         is_line_level: result.getValue({
                             name: 'custrecord_sansa_so_all_rule_line',
@@ -323,14 +327,14 @@ define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/
                 var sales_order = record.load({type: record.Type.SALES_ORDER, id: context.key});
                 var campaigns = {};
 
-                for (var i in allocation_rules) {
-                    log.debug(i, allocation_rules[i]);
+                for (var i=0; i<allocation_rules.length; i++) {
+                    log.debug(allocation_rules[i].rule_group, allocation_rules[i].rules_list);
 
                     // Using try/catch after the decision to continue down the list in the event of any error.
                     try {
                         campaigns = getCampaigns(campaigns, {
-                            allocation_rule_group_name: i,
-                            allocation_rule_group: allocation_rules[i],
+                            allocation_rule_group_name: allocation_rules[i].rule_group,
+                            allocation_rule_group: allocation_rules[i].rules_list,
                             loaded_record: sales_order
                         });
                     } catch (err) {
