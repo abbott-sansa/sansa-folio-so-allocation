@@ -315,4 +315,86 @@
       <subtab></subtab>
     </customrecordcustomfield>
   </customrecordcustomfields>
+  <instances>
+    <instance scriptid="val_50624_5602569_702">
+      <custrecord_sansa_so_all_rule_campaign>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sansa_so_all_rule_campaign>
+      <custrecord_sansa_so_all_rule_field>[scriptid=custbodygroup_id]</custrecord_sansa_so_all_rule_field>
+      <custrecord_sansa_so_all_rule_field_id>CUSTBODYGROUP_ID</custrecord_sansa_so_all_rule_field_id>
+      <custrecord_sansa_so_all_rule_group>[scriptid=customrecord_sansa_so_all_rule_group.val_23315_5602569_sb1_880]</custrecord_sansa_so_all_rule_group>
+      <custrecord_sansa_so_all_rule_pri>10</custrecord_sansa_so_all_rule_pri>
+      <custrecord_sansa_so_all_rule_text>Staff&#x5;PR&#x5;Other</custrecord_sansa_so_all_rule_text>
+      <custrecord_sansa_so_all_rule_value>4&#x5;6&#x5;7</custrecord_sansa_so_all_rule_value>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_50625_5602569_880">
+      <custrecord_sansa_so_all_rule_campaign>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sansa_so_all_rule_campaign>
+      <custrecord_sansa_so_all_rule_field>[scriptid=custbodygroup_id]</custrecord_sansa_so_all_rule_field>
+      <custrecord_sansa_so_all_rule_field_id>CUSTBODYGROUP_ID</custrecord_sansa_so_all_rule_field_id>
+      <custrecord_sansa_so_all_rule_group>[scriptid=customrecord_sansa_so_all_rule_group.val_23315_5602569_sb1_880]</custrecord_sansa_so_all_rule_group>
+      <custrecord_sansa_so_all_rule_pri>10</custrecord_sansa_so_all_rule_pri>
+      <custrecord_sansa_so_all_rule_text>Trade/Wholesale</custrecord_sansa_so_all_rule_text>
+      <custrecord_sansa_so_all_rule_value>5</custrecord_sansa_so_all_rule_value>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_50626_5602569_902">
+      <custrecord_sansa_so_all_rule_campaign></custrecord_sansa_so_all_rule_campaign>
+      <custrecord_sansa_so_all_rule_field>[scriptid=custbodydiscount_code]</custrecord_sansa_so_all_rule_field>
+      <custrecord_sansa_so_all_rule_field_id>CUSTBODYDISCOUNT_CODE</custrecord_sansa_so_all_rule_field_id>
+      <custrecord_sansa_so_all_rule_group>[scriptid=customrecord_sansa_so_all_rule_group.val_23316_5602569_sb1_825]</custrecord_sansa_so_all_rule_group>
+      <custrecord_sansa_so_all_rule_pri>20</custrecord_sansa_so_all_rule_pri>
+      <custrecord_sansa_so_all_rule_text></custrecord_sansa_so_all_rule_text>
+      <custrecord_sansa_so_all_rule_value></custrecord_sansa_so_all_rule_value>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_50627_5602569_987">
+      <custrecord_sansa_so_all_rule_campaign>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sansa_so_all_rule_campaign>
+      <custrecord_sansa_so_all_rule_field>[scriptid=custbodygroup_id]</custrecord_sansa_so_all_rule_field>
+      <custrecord_sansa_so_all_rule_field_id>CUSTBODYGROUP_ID</custrecord_sansa_so_all_rule_field_id>
+      <custrecord_sansa_so_all_rule_group>[scriptid=customrecord_sansa_so_all_rule_group.val_23317_5602569_sb1_477]</custrecord_sansa_so_all_rule_group>
+      <custrecord_sansa_so_all_rule_pri>30</custrecord_sansa_so_all_rule_pri>
+      <custrecord_sansa_so_all_rule_text>P6</custrecord_sansa_so_all_rule_text>
+      <custrecord_sansa_so_all_rule_value>3</custrecord_sansa_so_all_rule_value>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_50630_5602569_511">
+      <custrecord_sansa_so_all_rule_campaign></custrecord_sansa_so_all_rule_campaign>
+      <custrecord_sansa_so_all_rule_field></custrecord_sansa_so_all_rule_field>
+      <custrecord_sansa_so_all_rule_field_id></custrecord_sansa_so_all_rule_field_id>
+      <custrecord_sansa_so_all_rule_group>[scriptid=customrecord_sansa_so_all_rule_group.val_23319_5602569_sb1_264]</custrecord_sansa_so_all_rule_group>
+      <custrecord_sansa_so_all_rule_pri>50</custrecord_sansa_so_all_rule_pri>
+      <custrecord_sansa_so_all_rule_text></custrecord_sansa_so_all_rule_text>
+      <custrecord_sansa_so_all_rule_value></custrecord_sansa_so_all_rule_value>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_50631_5602569_995">
+      <custrecord_sansa_so_all_rule_campaign>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sansa_so_all_rule_campaign>
+      <custrecord_sansa_so_all_rule_field>[scriptid=custcol_so_all_rule_item_class]</custrecord_sansa_so_all_rule_field>
+      <custrecord_sansa_so_all_rule_field_id>CUSTCOL_SO_ALL_RULE_ITEM_CLASS</custrecord_sansa_so_all_rule_field_id>
+      <custrecord_sansa_so_all_rule_group>[scriptid=customrecord_sansa_so_all_rule_group.val_23320_5602569_sb1_962]</custrecord_sansa_so_all_rule_group>
+      <custrecord_sansa_so_all_rule_pri>60</custrecord_sansa_so_all_rule_pri>
+      <custrecord_sansa_so_all_rule_text>Limited Edition&#x5;Letter Press</custrecord_sansa_so_all_rule_text>
+      <custrecord_sansa_so_all_rule_value>1&#x5;9</custrecord_sansa_so_all_rule_value>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_50632_5602569_741">
+      <custrecord_sansa_so_all_rule_campaign>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sansa_so_all_rule_campaign>
+      <custrecord_sansa_so_all_rule_field></custrecord_sansa_so_all_rule_field>
+      <custrecord_sansa_so_all_rule_field_id></custrecord_sansa_so_all_rule_field_id>
+      <custrecord_sansa_so_all_rule_group>[scriptid=customrecord_sansa_so_all_rule_group.val_23321_5602569_sb1_371]</custrecord_sansa_so_all_rule_group>
+      <custrecord_sansa_so_all_rule_pri>70</custrecord_sansa_so_all_rule_pri>
+      <custrecord_sansa_so_all_rule_text></custrecord_sansa_so_all_rule_text>
+      <custrecord_sansa_so_all_rule_value></custrecord_sansa_so_all_rule_value>
+      <isinactive>F</isinactive>
+    </instance>
+    <instance scriptid="val_686890_5602569_566">
+      <custrecord_sansa_so_all_rule_campaign>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sansa_so_all_rule_campaign>
+      <custrecord_sansa_so_all_rule_field>[scriptid=custbody_so_all_live_cam_or_rec_ord]</custrecord_sansa_so_all_rule_field>
+      <custrecord_sansa_so_all_rule_field_id>CUSTBODY_SO_ALL_LIVE_CAM_OR_REC_ORD</custrecord_sansa_so_all_rule_field_id>
+      <custrecord_sansa_so_all_rule_group>[scriptid=customrecord_sansa_so_all_rule_group.val_686885_5602569_457]</custrecord_sansa_so_all_rule_group>
+      <custrecord_sansa_so_all_rule_pri>40</custrecord_sansa_so_all_rule_pri>
+      <custrecord_sansa_so_all_rule_text>0</custrecord_sansa_so_all_rule_text>
+      <custrecord_sansa_so_all_rule_value>0</custrecord_sansa_so_all_rule_value>
+      <isinactive>F</isinactive>
+    </instance>
+  </instances>
 </customrecordtype>

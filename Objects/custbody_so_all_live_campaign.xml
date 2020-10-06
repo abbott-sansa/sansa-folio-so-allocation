@@ -1,4 +1,4 @@
-<transactionbodycustomfield scriptid="custbody_so_all_live_cam_or_rec_ord">
+<transactionbodycustomfield scriptid="custbody_so_all_live_campaign">
   <accesslevel>2</accesslevel>
   <applyformatting>T</applyformatting>
   <bodycustomerpayment>F</bodycustomerpayment>
@@ -26,7 +26,7 @@
   <checkspelling>F</checkspelling>
   <defaultchecked>F</defaultchecked>
   <defaultselection></defaultselection>
-  <defaultvalue>CASE WHEN NVL({custbody_so_all_live_campaign},0) + NVL({custbody_so_all_recent_order},0) &amp;gt;= 1 THEN 1 ELSE 0 END</defaultvalue>
+  <defaultvalue></defaultvalue>
   <description>Used as part of the Sales Order Allocation process.</description>
   <displayheight></displayheight>
   <displaytype>LOCKED</displaytype>
@@ -37,18 +37,18 @@
   <fldsizelabel></fldsizelabel>
   <globalsearch>F</globalsearch>
   <help>Used as part of the Sales Order Allocation process.</help>
-  <isformula>T</isformula>
+  <isformula>F</isformula>
   <ismandatory>F</ismandatory>
   <isparent>F</isparent>
-  <label>Live Campaign OR Order within 12 Months</label>
+  <label>Live Campaign</label>
   <linktext></linktext>
   <maxlength></maxlength>
   <maxvalue></maxvalue>
   <minvalue></minvalue>
   <onparentdelete></onparentdelete>
   <parentsubtab></parentsubtab>
-  <searchcomparefield></searchcomparefield>
-  <searchdefault></searchdefault>
+  <searchcomparefield>STDBODYCUSTOMER</searchcomparefield>
+  <searchdefault>[scriptid=customsearch_so_all_live_campaign]</searchdefault>
   <searchlevel>2</searchlevel>
   <selectrecordtype></selectrecordtype>
   <showhierarchy>F</showhierarchy>
