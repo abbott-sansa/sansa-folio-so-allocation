@@ -5,9 +5,6 @@
     <files>
         <path>~/FileCabinet/SuiteScripts/*</path>
     </files>
-    <objects>
-        <path>~/Objects/*</path>
-    </objects>
     <translationimports>
         <path>~/Translations/*</path>
     </translationimports>

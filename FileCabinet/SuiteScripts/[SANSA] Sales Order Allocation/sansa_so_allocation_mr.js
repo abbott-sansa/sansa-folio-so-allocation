@@ -8,14 +8,18 @@
  * 1.0          04 Mar 2020         Chris Abbott                N/A
  * 1.1          01 Jul 2020         Chris Abbott                Moved Lot Number and Analysis Code automation to a separate script.
  * 1.2          05 Oct 2020         Chris Abbott                Filtered out some inactive records in Saved Searches.
+ * 1.3          18 Aug 2021         Chris Abbott                Added support for CURRENT allocation rule group.
  *
  * @NApiVersion 2.x
  * @NScriptType MapReduceScript
  * @NModuleScope SameAccount
  */
-define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/search'],
+define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/search', 'N/format'],
 
-    function (email, error, file, record, render, runtime, search) {
+    function (email, error, file, record, render, runtime, search, format) {
+
+        var order_within_twelve_months;
+        var live_campaign;
 
         // Function used to determine the Campaign associated with a particular Rule Group.
         function getCampaigns(campaigns, options) {
@@ -78,6 +82,132 @@ define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/
 
                     if (campaign_value) {
                         campaigns['*'] = campaign_value;
+                    }
+
+                    break;
+                case 'CURRENT':
+                    if (options.allocation_rule_group.length != 1) {
+                        throw error.create({
+                            name: 'INVALID_ALLOCATION_RULE_GROUP',
+                            message: 'Group [CURRENT] must contain exactly one Allocation Rule.'
+                        });
+                    }
+
+                    var customer_id = options.loaded_record.getValue({fieldId: 'entity'});
+                    var transaction_date = options.loaded_record.getValue({fieldId: 'trandate'});
+                    var transaction_date_string = transaction_date.getFullYear() + '-' + ('0' + (transaction_date.getMonth()+1)).slice(-2) + '-' + ('0' + transaction_date.getDate()).slice(-2);
+
+                    if (typeof order_within_twelve_months === 'undefined') {
+                        order_within_twelve_months = false
+                        search.create({
+                            type: search.Type.SALES_ORDER,
+                            columns: ['internalid'],
+                            filters: [
+                                ['internalidnumber', search.Operator.LESSTHAN, options.loaded_record.id],
+                                'and',
+                                ['customer.internalid', search.Operator.ANYOF, customer_id],
+                                'and',
+                                ['formulanumeric: CASE WHEN MONTHS_BETWEEN(DATE \'' + transaction_date_string + '\',{trandate})<=12 THEN 1 ELSE 0 END', search.Operator.EQUALTO, 1]
+                            ]
+                        }).run().each(function (result) {
+                            order_within_twelve_months = true;
+
+                            return false;
+                        });
+                    }
+
+                    if (typeof live_campaign === 'undefined') {
+                        live_campaign = false
+                        search.create({
+                            type: 'customrecord_customer_campaign',
+                            columns: ['internalid'],
+                            filters: [
+                                ['custrecord_customer', search.Operator.ANYOF, customer_id],
+                                'and',
+                                ['formulanumeric: CASE WHEN {custrecord_campaign.custrecord_start_date}<=DATE \'' + transaction_date_string + '\' AND {custrecord_campaign.custrecord_end_date}>=DATE \'' + transaction_date_string + '\' THEN 1 ELSE 0 END', search.Operator.EQUALTO, 1]
+                            ]
+                        }).run().each(function (result) {
+                            live_campaign = true;
+
+                            return false;
+                        });
+                    }
+
+                    log.debug({
+                        title: 'order_within_twelve_months',
+                        details: order_within_twelve_months
+                    });
+
+                    log.debug({
+                        title: 'live_campaign',
+                        details: live_campaign
+                    });
+
+                    if (order_within_twelve_months && !live_campaign) {
+                        campaigns['*'] = [options.allocation_rule_group[0].campaign];
+                    }
+
+                    break;
+                case 'LAPSED':
+                    if (options.allocation_rule_group.length != 1) {
+                        throw error.create({
+                            name: 'INVALID_ALLOCATION_RULE_GROUP',
+                            message: 'Group [LAPSED] must contain exactly one Allocation Rule.'
+                        });
+                    }
+
+                    var customer_id = options.loaded_record.getValue({fieldId: 'entity'});
+                    var transaction_date = options.loaded_record.getValue({fieldId: 'trandate'});
+                    var transaction_date_string = transaction_date.getFullYear() + '-' + ('0' + (transaction_date.getMonth()+1)).slice(-2) + '-' + ('0' + transaction_date.getDate()).slice(-2);
+
+                    if (typeof order_within_twelve_months === 'undefined') {
+                        order_within_twelve_months = false
+                        search.create({
+                            type: search.Type.SALES_ORDER,
+                            columns: ['internalid'],
+                            filters: [
+                                ['internalidnumber', search.Operator.LESSTHAN, options.loaded_record.id],
+                                'and',
+                                ['customer.internalid', search.Operator.ANYOF, customer_id],
+                                'and',
+                                ['formulanumeric: CASE WHEN MONTHS_BETWEEN(DATE \'' + transaction_date_string + '\',{trandate})<=12 THEN 1 ELSE 0 END', search.Operator.EQUALTO, 1]
+                            ]
+                        }).run().each(function (result) {
+                            order_within_twelve_months = true;
+
+                            return false;
+                        });
+                    }
+
+                    if (typeof live_campaign === 'undefined') {
+                        live_campaign = false
+                        search.create({
+                            type: 'customrecord_customer_campaign',
+                            columns: ['internalid'],
+                            filters: [
+                                ['custrecord_customer', search.Operator.ANYOF, customer_id],
+                                'and',
+                                ['formulanumeric: CASE WHEN {custrecord_campaign.custrecord_start_date}<=DATE \'' + transaction_date_string + '\' AND {custrecord_campaign.custrecord_end_date}>=DATE \'' + transaction_date_string + '\' THEN 1 ELSE 0 END', search.Operator.EQUALTO, 1]
+                            ]
+                        }).run().each(function (result) {
+                            live_campaign = true;
+
+                            return false;
+                        });
+                    }
+
+                    log.debug({
+                        title: 'order_within_twelve_months',
+                        details: order_within_twelve_months
+                    });
+
+                    log.debug({
+                        title: 'live_campaign',
+                        details: live_campaign
+                    });
+
+                    if (!order_within_twelve_months && !live_campaign) {
+                        campaigns['*'] = [options.allocation_rule_group[0].campaign];
                     }
 
                     break;
@@ -282,10 +412,8 @@ define(['N/email', 'N/error', 'N/file', 'N/record', 'N/render', 'N/runtime', 'N/
          * @since 2015.1
          */
         function reduce(context) {
-            // Map handles allocation and reduce deals with the other stuff.
             log.debug('context', context);
 
-            // Wrap this all in a try/catch to allow falling through to reduce in case of any fatal error.
             try {
                 // Load the SO Allocation Rules.
                 var allocation_rules = [];
