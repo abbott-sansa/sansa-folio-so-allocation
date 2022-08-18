@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/[SANSA|FOLIO] Sales Order Allocation.iml" filepath="$PROJECT_DIR$/.idea/[SANSA|FOLIO] Sales Order Allocation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/sansa-folio-so-allocation.iml" filepath="$PROJECT_DIR$/.idea/sansa-folio-so-allocation.iml" />
     </modules>
   </component>
 </project>
